@@ -7,5 +7,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/Peter/Desktop/Minecraft/spigot-1.16.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Peter/Desktop/Minecraft/MC/plugins/Vault.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
