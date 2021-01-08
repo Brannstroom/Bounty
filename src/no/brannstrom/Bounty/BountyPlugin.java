@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,52 +13,61 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Lists;
 
 import net.milkbowl.vault.economy.Economy;
+import no.brannstrom.Bounty.commands.BountiesCommand;
 import no.brannstrom.Bounty.commands.BountyCommand;
+import no.brannstrom.Bounty.handlers.MemoryHandler;
 import no.brannstrom.Bounty.listeners.MainListener;
 
 public class BountyPlugin extends JavaPlugin {
-	
+
 	public FileConfiguration config;
+
+	public File bountiesConfigFile;
 	public FileConfiguration bountiesConfig;
-	
-	public Economy economy;
-	
-	public File file;
+
+	private static final Logger log = Logger.getLogger("Minecraft");
+	private static Economy econ = null;
 
 	public static BountyPlugin instance;
 
 	public void onEnable() {
+
 		instance = this;
+
 		loadListeners();
 		loadCommands();
-		
-		setupEconomy();
-		if(!setupEconomy()) {
-			System.out.println("Server shutting down because Vault not starting in Bounty Plugin");
-			Bukkit.shutdown();
+
+		if (!setupEconomy() ) {
+			log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+			getServer().getPluginManager().disablePlugin(this);
+			return;
 		}
 
-		getConfig();
+		config = getConfig();
 		saveDefaultConfig();
-		
-		createBountyConfig();
+
+		createBountiesConfig();
+
+		restoreBounties();
 
 		System.out.println(ChatColor.DARK_GREEN + "[Bounty] " + ChatColor.WHITE + "Successfully started Bounty v1.0");
-		
+
 	}
 
 	public void onDisable() {
-	
-		
-		System.out.println(ChatColor.DARK_RED + "[Bounty] " + ChatColor.WHITE + "Bounty shutting down");
+		if(!MemoryHandler.bounties.isEmpty()) {
+			saveBounties();
+		}
 	}
 
 	private void loadListeners() {
@@ -64,27 +75,53 @@ public class BountyPlugin extends JavaPlugin {
 	}
 
 	private void loadCommands() {
-		
+
 		registerCommand("bounty", new BountyCommand());
-		
+		registerCommand("bounties", new BountiesCommand());
+
 	}
-	
-	private void createBountyConfig() {
-		file = new File(BountyPlugin.instance.getDataFolder(), "bountiesConfig.yml");
-		if(!file.exists()) {
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+
+	public FileConfiguration getBountiesConfig() {
+		return this.bountiesConfig;
+	}
+
+	public void createBountiesConfig() {
+		bountiesConfigFile = new File(getDataFolder(), "bountiesConfig.yml");
+		if(!bountiesConfigFile.exists()) {
+			bountiesConfigFile.getParentFile().mkdirs();
+			saveResource("bountiesConfig.yml", true);
 		}
-		
-		bountiesConfig = YamlConfiguration.loadConfiguration(file);
+
+		bountiesConfig = new YamlConfiguration();
+		try {
+			bountiesConfig.load(bountiesConfigFile);
+		} catch (IOException | InvalidConfigurationException e) {
+			e.printStackTrace();
+		}
+
 	}
-	
-	private boolean setupEconomy() {
-		
-		return true;
+
+	public void saveBounties() {
+		for(Map.Entry<String, Double> entry : MemoryHandler.bounties.entrySet()) {
+			double amount = entry.getValue();
+			bountiesConfig.set("bounties." + entry.getKey() + ".amount", amount);
+		}
+		try {
+			bountiesConfig.save(bountiesConfigFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void restoreBounties() {
+		try {
+			bountiesConfig.getConfigurationSection("bounties").getKeys(false).forEach(key -> {
+				double amount = config.getDouble("bounties." + key + ".amount");
+				MemoryHandler.bounties.put(key, amount);
+			});
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void registerCommand(String name, CommandExecutor executor, String... aliases) {
@@ -115,5 +152,21 @@ public class BountyPlugin extends JavaPlugin {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	private boolean setupEconomy() {
+		if (getServer().getPluginManager().getPlugin("Vault") == null) {
+			return false;
+		}
+		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+		if (rsp == null) {
+			return false;
+		}
+		econ = rsp.getProvider();
+		return econ != null;
+	}
+
+	public static Economy getEconomy() {
+		return econ;
 	}
 }

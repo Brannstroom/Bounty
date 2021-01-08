@@ -1,0 +1,13 @@
+### Bounty Config
+
+Bountied Yourself: '&cYou cant put a bounty on yourself'
+
+Insufficient Funds: '&cYou do not have the sufficient funds to set this bounty'
+
+Player Not Found: '&cSpecified player was not found'
+
+Player Has No Bounty: '&cSpecified player has no bounty'
+
+Specific Players Bounty: '<player>&c has a &f<amount>&c$ bounty on their head'
+
+No Player With Bounty: '&cThere are currently no online player with a bounty'
