@@ -15,5 +15,15 @@ public class InfoKeeper {
 	public static String playerHasNoBounty = ChatColor.translateAlternateColorCodes('&', config.getString("Player Has No Bounty"));
 	public static String specificPlayersBounty = ChatColor.translateAlternateColorCodes('&', config.getString("Specific Players Bounty"));
 	public static String noPlayerWithBounty = ChatColor.translateAlternateColorCodes('&', config.getString("No Player With Bounty"));
+	public static String noOnlinePlayerWithBounty = ChatColor.translateAlternateColorCodes('&', config.getString("No Online Player With Bounty"));
+	public static String notEnoughPages = ChatColor.translateAlternateColorCodes('&', config.getString("Not Enough Pages"));
+	public static String pageMustBeNumber = ChatColor.translateAlternateColorCodes('&', config.getString("Page Must Be Number"));
 	
+	public static String setBounty1 = ChatColor.translateAlternateColorCodes('&', config.getString("Set Bounty 1"));
+	public static String setBounty2 = ChatColor.translateAlternateColorCodes('&', config.getString("Set Bounty 2"));
+	public static String increasedBounty1 = ChatColor.translateAlternateColorCodes('&', config.getString("Increased Bounty 1"));
+	public static String increasedBounty2 = ChatColor.translateAlternateColorCodes('&', config.getString("Increased Bounty 2"));
+	public static String claimedBountyKiller = ChatColor.translateAlternateColorCodes('&', config.getString("Claimed Bounty Killer"));
+	public static String claimedBountyKilled = ChatColor.translateAlternateColorCodes('&', config.getString("Claimed Bounty Killed"));
+	public static String claimedBountyBroadcast = ChatColor.translateAlternateColorCodes('&', config.getString("Claimed Bounty Broadcast"));
 }

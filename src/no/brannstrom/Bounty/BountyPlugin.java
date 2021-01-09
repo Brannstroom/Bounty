@@ -102,6 +102,10 @@ public class BountyPlugin extends JavaPlugin {
 	}
 
 	public void saveBounties() {
+		bountiesConfig.getConfigurationSection("bounties").getKeys(false).forEach(key -> {
+			bountiesConfig.set("bounties." + key + ".amount", 0.0);
+		});
+		
 		for(Map.Entry<String, Double> entry : MemoryHandler.bounties.entrySet()) {
 			double amount = entry.getValue();
 			bountiesConfig.set("bounties." + entry.getKey() + ".amount", amount);
@@ -114,14 +118,10 @@ public class BountyPlugin extends JavaPlugin {
 	}
 
 	public void restoreBounties() {
-		try {
 			bountiesConfig.getConfigurationSection("bounties").getKeys(false).forEach(key -> {
-				double amount = config.getDouble("bounties." + key + ".amount");
+				double amount = bountiesConfig.getDouble("bounties." + key + ".amount");
 				MemoryHandler.bounties.put(key, amount);
 			});
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void registerCommand(String name, CommandExecutor executor, String... aliases) {

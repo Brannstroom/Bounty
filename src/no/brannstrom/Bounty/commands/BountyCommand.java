@@ -1,7 +1,6 @@
 package no.brannstrom.Bounty.commands;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,6 +9,7 @@ import org.bukkit.entity.Player;
 import net.milkbowl.vault.economy.Economy;
 import no.brannstrom.Bounty.BountyPlugin;
 import no.brannstrom.Bounty.handlers.InfoKeeper;
+import no.brannstrom.Bounty.handlers.MainHandler;
 import no.brannstrom.Bounty.handlers.MemoryHandler;
 
 public class BountyCommand implements CommandExecutor {
@@ -49,11 +49,12 @@ public class BountyCommand implements CommandExecutor {
 					MemoryHandler.bounties.put(t.getUniqueId().toString(), bAmount);
 					
 					if(hadBounty) {
-						p.sendMessage("You increased the bounty on " + t.getName() + " by " + amount + "$, to a total of " + bAmount + "$.");
-						t.sendMessage(p.getName() + " increased your bounty by " + amount + "$, to a total of " + bAmount + "$.");
+						p.sendMessage(InfoKeeper.increasedBounty1.replaceAll("<player>", t.getName()).replaceAll("<amount>", String.valueOf(amount)).replaceAll("<newamount>", String.valueOf(bAmount)));
+						t.sendMessage(InfoKeeper.increasedBounty2.replaceAll("<player>", p.getName()).replaceAll("<amount>", String.valueOf(amount)).replaceAll("<newamount>", String.valueOf(bAmount)));
+
 					} else {
-						p.sendMessage("You put a " + amount + "$ bounty on " + t.getName() + ".");
-						t.sendMessage(p.getName() + " put a " + amount + "$ bounty on your head.");
+						p.sendMessage(InfoKeeper.setBounty1.replaceAll("<player>", t.getName()).replaceAll("<amount>", String.valueOf(amount)));
+						t.sendMessage(InfoKeeper.setBounty2.replaceAll("<player>", p.getName()).replaceAll("<amount>", String.valueOf(amount)));
 					}
 				} else {
 					p.sendMessage(InfoKeeper.insufficientFunds);
@@ -62,9 +63,7 @@ public class BountyCommand implements CommandExecutor {
 				p.sendMessage(InfoKeeper.playerNotFound);
 			}
 		} else {
-			p.sendMessage("--- Bounty ---");
-			p.sendMessage(ChatColor.YELLOW+ "Use: '" + ChatColor.WHITE + "/bounty <player> <amount>" + ChatColor.YELLOW + "' to set a bounty");
-			p.sendMessage(ChatColor.YELLOW + "Use: '" + ChatColor.WHITE + "/bounties [Page]" + ChatColor.YELLOW + "' to see all bounties");
+			MainHandler.sendErrorMessage(p);
 		}
 		return true;
 	}

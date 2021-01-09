@@ -1,13 +1,49 @@
 ### Bounty Config
 
-Bountied Yourself: '&cYou cant put a bounty on yourself'
+# When player tries to put a bounty on himself
+Bountied Yourself: '&cYou cant put a bounty on yourself.'
 
-Insufficient Funds: '&cYou do not have the sufficient funds to set this bounty'
+# When player doesnt have enough money to set the amount he tried to set
+Insufficient Funds: '&cYou do not have the sufficient funds to set this bounty.'
 
-Player Not Found: '&cSpecified player was not found'
+# When a player is not found, or is not online
+Player Not Found: '&cSpecified player was not found.'
 
-Player Has No Bounty: '&cSpecified player has no bounty'
+# When player tries to check a players bounty, but target has no bounty
+Player Has No Bounty: '&cSpecified player has no bounty.'
 
-Specific Players Bounty: '<player>&c has a &f<amount>&c$ bounty on their head'
+# When player checks bounty and target actually has
+Specific Players Bounty: '&4<player>&c has a <amount>$ bounty on their head.'
 
-No Player With Bounty: '&cThere are currently no online player with a bounty'
+# When player tries to see bounty list, but there are no bounties
+No Player With Bounty: '&cThere are currently no player with a bounty.'
+
+# When player tries to see online bounty list, but there are no one online with a bounty
+No Online Player With Bounty: '&cThere are currently no online player with a bounty.'
+
+# When a player tries to check a page higher than the amount of existing pages
+Not Enough Pages: '&cThere is not enough bounties to show page <page>.'
+
+# When player tries to write something other than a whole number as page number
+Page Must Be Number: '&cPage must be a whole number, which <page> isnt.'
+
+# When setter puts a bounty
+Set Bounty 1: '&aYou put a <amount>$ bounty on &4<player>&a.'
+
+# When receiver gets a bounty on them
+Set Bounty 2: '&4<player> &chas put a <amount>$ bounty on you.'
+
+# When setter increases receivers bounty
+Increased Bounty 1: '&aYou increased the bounty on &4<player> &aby <amount>$, to a total of <newamount>$'
+
+# When receiver gets their bounty increased 
+Increased Bounty 2: '&4<player> &cincreased your bounty by <amount>$, to a total of <newamount>$.'
+
+# Message killer gets when he claims bounty
+Claimed Bounty Killer: '&aYou claimed the <amount>$ bounty on &4<player>&a.'
+
+# Message killed gets when someone claims their bounty
+Claimed Bounty Killed: '&4<player>&c claimed your bounty of <amount>$.'
+
+# Broadcasted message when someone claims anothers bounty
+Claimed Bounty Broadcast: '&4<killer>&c claimed the <amount>$ bounty on &4<killed>&c.'
