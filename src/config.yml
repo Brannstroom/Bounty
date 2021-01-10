@@ -47,3 +47,9 @@ Claimed Bounty Killed: '&4<player>&c claimed your bounty of <amount>$.'
 
 # Broadcasted message when someone claims anothers bounty
 Claimed Bounty Broadcast: '&4<killer>&c claimed the <amount>$ bounty on &4<killed>&c.'
+
+# Should taxes be enabled?
+Taxes: true
+
+# 5 = 5% tax
+Tax Percentage: '5'
