@@ -30,21 +30,35 @@ public class MainListener implements Listener {
 						if (killer instanceof Player) {
 							Player k = (Player) killer;
 							double amount = MemoryHandler.bounties.get(p.getUniqueId().toString());
+							if(InfoKeeper.taxes) {
+								double amountTax = InfoKeeper.taxPercent;
+								double amountAfterTax = amount-((amount*amountTax)/100);
+								BountyPlugin.getEconomy().depositPlayer(k, amountAfterTax);
+							} else {
+								BountyPlugin.getEconomy().depositPlayer(k, amount);
+							}
+							MemoryHandler.bounties.remove(p.getUniqueId().toString());
 							p.sendMessage(InfoKeeper.claimedBountyKilled.replaceAll("<player>", k.getName()).replaceAll("<amount>", String.valueOf(amount)));
 							k.sendMessage(InfoKeeper.claimedBountyKiller.replaceAll("<player>", k.getName()).replaceAll("<amount>", String.valueOf(amount)));
 							Bukkit.broadcastMessage(InfoKeeper.claimedBountyBroadcast.replaceAll("<killer>", k.getName()).replaceAll("<killed>", p.getName()).replaceAll("<amount>", String.valueOf(amount)));
-							MemoryHandler.bounties.remove(p.getUniqueId().toString());
-							BountyPlugin.getEconomy().depositPlayer(k, amount);
+
 						}
 					} else {
 						if(dmgEvent.getDamager() instanceof Player) {
 							Player k = (Player) dmgEvent.getDamager();
 							double amount = MemoryHandler.bounties.get(p.getUniqueId().toString());
+							if(InfoKeeper.taxes) {
+								double amountTax = InfoKeeper.taxPercent;
+								double amountAfterTax = amount-((amount*amountTax)/100);
+								BountyPlugin.getEconomy().depositPlayer(k, amountAfterTax);
+							} else {
+								BountyPlugin.getEconomy().depositPlayer(k, amount);
+							}
+							MemoryHandler.bounties.remove(p.getUniqueId().toString());
 							p.sendMessage(InfoKeeper.claimedBountyKilled.replaceAll("<player>", k.getName()).replaceAll("<amount>", String.valueOf(amount)));
 							k.sendMessage(InfoKeeper.claimedBountyKiller.replaceAll("<player>", k.getName()).replaceAll("<amount>", String.valueOf(amount)));
 							Bukkit.broadcastMessage(InfoKeeper.claimedBountyBroadcast.replaceAll("<killer>", k.getName()).replaceAll("<killed>", p.getName()).replaceAll("<amount>", String.valueOf(amount)));
-							MemoryHandler.bounties.remove(p.getUniqueId().toString());
-							BountyPlugin.getEconomy().depositPlayer(k, amount);
+
 						}
 					}
 				}

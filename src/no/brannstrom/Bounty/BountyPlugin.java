@@ -103,7 +103,7 @@ public class BountyPlugin extends JavaPlugin {
 
 	public void saveBounties() {
 		bountiesConfig.getConfigurationSection("bounties").getKeys(false).forEach(key -> {
-			bountiesConfig.set("bounties." + key + ".amount", 0.0);
+			bountiesConfig.set("bounties." + key, null);
 		});
 		
 		for(Map.Entry<String, Double> entry : MemoryHandler.bounties.entrySet()) {
