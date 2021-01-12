@@ -15,7 +15,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
@@ -29,7 +31,6 @@ public class BountiesCommand implements CommandExecutor {
 
 	Economy economy = BountyPlugin.getEconomy();
 
-	@SuppressWarnings("deprecation")
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(!(sender instanceof Player)) {
 			sender.sendMessage("This must be sent from ingame");
@@ -43,37 +44,15 @@ public class BountiesCommand implements CommandExecutor {
 			p.sendMessage(InfoKeeper.noPlayerWithBounty);
 			return true;
 		}
-		
+
 		if(args.length > 0 && args[0].equalsIgnoreCase("online")) {
 			if(MainHandler.getOnlineMaxPage() == 0) {
 				p.sendMessage(InfoKeeper.noOnlinePlayerWithBounty);
 				return true;
 			}
 		}
-		
-		if(args.length == 0) {
-			showBountyPage(p, 1, MainHandler.getOnlineMaxPage(), true);
-		} else if(args.length == 1) {
-			if(args[0].equalsIgnoreCase("online")) {
-				showBountyPage(p, 1, MainHandler.getOnlineMaxPage(), true);
-			} else if(args[0].equalsIgnoreCase("offline")) {
-				showBountyPage(p, 1, MainHandler.getOfflineMaxPage(), false);
-			} else if((Bukkit.getOfflinePlayer(args[0]) != null) && args[0].length() >= 3) {
-				OfflinePlayer t = Bukkit.getOfflinePlayer(args[0]);
-				if(t != null) {
-					if(MemoryHandler.bounties.containsKey(t.getUniqueId().toString())) {
-						double amount = MemoryHandler.bounties.get(t.getUniqueId().toString());
-						p.sendMessage(InfoKeeper.specificPlayersBounty.replaceAll("<player>", t.getName()).replaceAll("<amount>", String.valueOf(amount)));
-					} else {
-						p.sendMessage(InfoKeeper.playerHasNoBounty);
-					}
-				} else {
-					p.sendMessage(InfoKeeper.playerNotFound);
-				}
-			} else {
-				MainHandler.sendErrorMessage(p);
-			}
-		} else if(args.length == 2) {
+
+		if(args.length == 2) {
 			if(MainHandler.isNumeric(args[1])) {
 				if(args[0].equalsIgnoreCase("online")) {
 					int page = Integer.parseInt(args[1]);
@@ -134,26 +113,53 @@ public class BountiesCommand implements CommandExecutor {
 		} else {
 			status += "Offline";
 		}
-		
+
 		p.sendMessage("");
-		p.sendMessage(ChatColor.RED + "-----[ Top " + status + " Bounties ]-----");
+		p.sendMessage("");
+		p.sendMessage(ChatColor.DARK_RED + "-----[ Top " + status + " Bounties ]-----");
 		for(int i = (page-1)*10; i < page*10; i++) {
 			if(i <= uuids.size()-1) {
 				String uuid = uuids.get(i);
 				OfflinePlayer t = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
 				double amount = MemoryHandler.bounties.get(uuid);
-				p.sendMessage("" + ChatColor.DARK_RED + (i+1) + ChatColor.RED + ". " + ChatColor.DARK_RED + t.getName() + ChatColor.RED + " has a bounty of " + ChatColor.DARK_RED + amount + "$" + ChatColor.RED + ".");
+				p.sendMessage("" + ChatColor.DARK_RED + (i+1) + ChatColor.RED + ". " + ChatColor.DARK_RED + t.getName() + ChatColor.RED + " has a bounty of " + ChatColor.DARK_RED + "$" + amount + ChatColor.RED + ".");
 			}
 		}
+		p.spigot().sendMessage(getComponentBuilder(status, page, maxPage));
+	}
 
-		String command = "/bounties " + status + " " + (page+1);
-		TextComponent msg = new TextComponent(MainHandler.colorText(ChatColor.RED, "Total:") + ChatColor.DARK_RED + uuids.size() + MainHandler.colorText(ChatColor.RED, " - ") + MainHandler.colorText(ChatColor.DARK_RED, "Next Page ≫"));
-		msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
-		msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Show next page")));
-		if(page < maxPage) {
-			p.spigot().sendMessage(msg);
+	private BaseComponent[] getComponentBuilder(String status, int page, int maxPage) {
+
+		TextComponent previous = new TextComponent(MainHandler.colorText(ChatColor.DARK_RED, " ≪ Previous"));
+		previous.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/bounties " + status + " " + (page-1)));
+		previous.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Show previous page")));
+
+		TextComponent next = new TextComponent(MainHandler.colorText(ChatColor.DARK_RED, "Next ≫"));
+		next.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/bounties " + status + " " + (page+1)));
+		next.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Show next page")));
+
+		TextComponent previousFake = new TextComponent(MainHandler.colorText(ChatColor.DARK_RED, "≪ Previous"));
+		previousFake.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Show previous page")));
+
+		TextComponent nextFake = new TextComponent(MainHandler.colorText(ChatColor.DARK_RED, "Next ≫ "));
+		nextFake.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Show next page")));
+
+		TextComponent minMax = new TextComponent(ChatColor.DARK_RED + "| " + ChatColor.RED + page + ChatColor.DARK_RED + " of " + ChatColor.RED + maxPage + ChatColor.DARK_RED + " | ");
+		minMax.setClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, ""));
+		minMax.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(" ")));
+
+		if(page == maxPage) {
+			if(page == 1) {
+				return new ComponentBuilder().append(previousFake).append(minMax).append(nextFake).create();
+			} else {
+				return new ComponentBuilder().append(previous).append(minMax).append(nextFake).create();
+			}
 		} else {
-			p.sendMessage(MainHandler.colorText(ChatColor.RED, "Total:") + ChatColor.DARK_RED + uuids.size());
-		}
+			if(page == 1) {
+				return new ComponentBuilder().append(previousFake).append(minMax).append(next).create();
+			} else {
+				return new ComponentBuilder().append(previous).append(minMax).append(next).create();
+			}
+		}		
 	}
 }

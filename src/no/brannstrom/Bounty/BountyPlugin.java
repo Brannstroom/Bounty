@@ -22,6 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Lists;
 
+import me.neznamy.tab.api.TABAPI;
 import net.milkbowl.vault.economy.Economy;
 import no.brannstrom.Bounty.commands.BountiesCommand;
 import no.brannstrom.Bounty.commands.BountyCommand;
@@ -41,6 +42,9 @@ public class BountyPlugin extends JavaPlugin {
 	public static BountyPlugin instance;
 
 	public void onEnable() {
+		
+
+		TABAPI.enableUnlimitedNameTagModePermanently();
 
 		instance = this;
 

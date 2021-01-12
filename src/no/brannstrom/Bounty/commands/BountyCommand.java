@@ -1,6 +1,7 @@
 package no.brannstrom.Bounty.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,7 +26,20 @@ public class BountyCommand implements CommandExecutor {
 		
 		Player p = (Player) sender;
 		
-		if(args.length == 2) {
+		if(args.length == 1) {
+			OfflinePlayer offlineTarget = Bukkit.getPlayer(args[0]);
+			if(offlineTarget != null) {
+				if(MemoryHandler.bounties.containsKey(offlineTarget.getUniqueId().toString())) {
+					double amount = MemoryHandler.bounties.get(offlineTarget.getUniqueId().toString());
+					p.sendMessage(InfoKeeper.specificPlayersBounty.replaceAll("<player>", offlineTarget.getName()).replaceAll("<amount>", String.valueOf(amount)));
+				} else {
+					p.sendMessage(InfoKeeper.playerHasNoBounty);
+				}
+			} else {
+				p.sendMessage(InfoKeeper.playerNotFound);
+			}
+			
+		} else if(args.length == 2) {
 			Player t = Bukkit.getPlayer(args[0]);
 			if(t != null) {
 				
@@ -33,29 +47,10 @@ public class BountyCommand implements CommandExecutor {
 					p.sendMessage(InfoKeeper.bountiedYourself);
 					return true;
 				}
-				
 				Double amount = Double.parseDouble(args[1]);
 				Double balance = BountyPlugin.getEconomy().getBalance(p);
 				if(amount <= balance) {
-					BountyPlugin.getEconomy().withdrawPlayer(p, amount);
-					Double bAmount = amount;
-					boolean hadBounty = false;
-					if(MemoryHandler.bounties.containsKey(t.getUniqueId().toString())) {
-						double b = MemoryHandler.bounties.get(t.getUniqueId().toString());
-						MemoryHandler.bounties.remove(t.getUniqueId().toString());
-						bAmount = amount+b;
-						hadBounty = true;
-					}
-					MemoryHandler.bounties.put(t.getUniqueId().toString(), bAmount);
-					
-					if(hadBounty) {
-						p.sendMessage(InfoKeeper.increasedBounty1.replaceAll("<player>", t.getName()).replaceAll("<amount>", String.valueOf(amount)).replaceAll("<newamount>", String.valueOf(bAmount)));
-						t.sendMessage(InfoKeeper.increasedBounty2.replaceAll("<player>", p.getName()).replaceAll("<amount>", String.valueOf(amount)).replaceAll("<newamount>", String.valueOf(bAmount)));
-
-					} else {
-						p.sendMessage(InfoKeeper.setBounty1.replaceAll("<player>", t.getName()).replaceAll("<amount>", String.valueOf(amount)));
-						t.sendMessage(InfoKeeper.setBounty2.replaceAll("<player>", p.getName()).replaceAll("<amount>", String.valueOf(amount)));
-					}
+					MainHandler.setBounty(p, t, amount);
 				} else {
 					p.sendMessage(InfoKeeper.insufficientFunds);
 				}

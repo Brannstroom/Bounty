@@ -9,9 +9,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import no.brannstrom.Bounty.BountyPlugin;
 import no.brannstrom.Bounty.handlers.InfoKeeper;
+import no.brannstrom.Bounty.handlers.MainHandler;
 import no.brannstrom.Bounty.handlers.MemoryHandler;
 
 public class MainListener implements Listener {
@@ -39,9 +41,9 @@ public class MainListener implements Listener {
 							}
 							MemoryHandler.bounties.remove(p.getUniqueId().toString());
 							p.sendMessage(InfoKeeper.claimedBountyKilled.replaceAll("<player>", k.getName()).replaceAll("<amount>", String.valueOf(amount)));
-							k.sendMessage(InfoKeeper.claimedBountyKiller.replaceAll("<player>", k.getName()).replaceAll("<amount>", String.valueOf(amount)));
+							k.sendMessage(InfoKeeper.claimedBountyKiller.replaceAll("<player>", p.getName()).replaceAll("<amount>", String.valueOf(amount)).replaceAll("<tax>", String.valueOf(InfoKeeper.taxPercent)));
 							Bukkit.broadcastMessage(InfoKeeper.claimedBountyBroadcast.replaceAll("<killer>", k.getName()).replaceAll("<killed>", p.getName()).replaceAll("<amount>", String.valueOf(amount)));
-
+							MainHandler.removeOverName(p);
 						}
 					} else {
 						if(dmgEvent.getDamager() instanceof Player) {
@@ -56,13 +58,22 @@ public class MainListener implements Listener {
 							}
 							MemoryHandler.bounties.remove(p.getUniqueId().toString());
 							p.sendMessage(InfoKeeper.claimedBountyKilled.replaceAll("<player>", k.getName()).replaceAll("<amount>", String.valueOf(amount)));
-							k.sendMessage(InfoKeeper.claimedBountyKiller.replaceAll("<player>", k.getName()).replaceAll("<amount>", String.valueOf(amount)));
+							k.sendMessage(InfoKeeper.claimedBountyKiller.replaceAll("<player>", p.getName()).replaceAll("<amount>", String.valueOf(amount)).replaceAll("<tax>", String.valueOf(InfoKeeper.taxPercent)));
 							Bukkit.broadcastMessage(InfoKeeper.claimedBountyBroadcast.replaceAll("<killer>", k.getName()).replaceAll("<killed>", p.getName()).replaceAll("<amount>", String.valueOf(amount)));
-
+							MainHandler.removeOverName(p);
 						}
 					}
 				}
 			}
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		Player p = event.getPlayer();
+		if(MemoryHandler.bounties.containsKey(p.getUniqueId().toString())) {
+			double amount = MemoryHandler.bounties.get(p.getUniqueId().toString());
+			MainHandler.setOverName(p, amount);
 		}
 	}
 }
