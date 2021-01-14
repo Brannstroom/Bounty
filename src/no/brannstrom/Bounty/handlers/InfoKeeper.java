@@ -27,6 +27,7 @@ public class InfoKeeper {
 	public static String claimedBountyKilled = ChatColor.translateAlternateColorCodes('&', config.getString("Claimed Bounty Killed"));
 	public static String claimedBountyBroadcast = ChatColor.translateAlternateColorCodes('&', config.getString("Claimed Bounty Broadcast"));
 	
+	public static String overHead = ChatColor.translateAlternateColorCodes('&', config.getString("Over Head"));
 	public static Boolean taxes = config.getBoolean("Taxes");
 	public static int taxPercent = Integer.parseInt(config.getString("Tax Percentage"));
 }

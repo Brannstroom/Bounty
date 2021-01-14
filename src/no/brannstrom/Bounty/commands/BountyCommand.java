@@ -14,7 +14,7 @@ import no.brannstrom.Bounty.handlers.MainHandler;
 import no.brannstrom.Bounty.handlers.MemoryHandler;
 
 public class BountyCommand implements CommandExecutor {
-	
+
 	Economy economy = BountyPlugin.getEconomy();
 
 	@Override
@@ -23,9 +23,7 @@ public class BountyCommand implements CommandExecutor {
 			sender.sendMessage("This must be sent from ingame");
 			return true;
 		}
-		
 		Player p = (Player) sender;
-		
 		if(args.length == 1) {
 			OfflinePlayer offlineTarget = Bukkit.getPlayer(args[0]);
 			if(offlineTarget != null) {
@@ -38,21 +36,23 @@ public class BountyCommand implements CommandExecutor {
 			} else {
 				p.sendMessage(InfoKeeper.playerNotFound);
 			}
-			
 		} else if(args.length == 2) {
 			Player t = Bukkit.getPlayer(args[0]);
 			if(t != null) {
-				
 				if(t.getName().equals(p.getName())) {
 					p.sendMessage(InfoKeeper.bountiedYourself);
 					return true;
 				}
-				Double amount = Double.parseDouble(args[1]);
-				Double balance = BountyPlugin.getEconomy().getBalance(p);
-				if(amount <= balance) {
-					MainHandler.setBounty(p, t, amount);
+				if(MainHandler.isNumeric(args[1])) {
+					Double amount = Double.parseDouble(args[1]);
+					Double balance = BountyPlugin.getEconomy().getBalance(p);
+					if(amount <= balance) {
+						MainHandler.setBounty(p, t, amount);
+					} else {
+						p.sendMessage(InfoKeeper.insufficientFunds);
+					}
 				} else {
-					p.sendMessage(InfoKeeper.insufficientFunds);
+					MainHandler.sendErrorMessage(p);
 				}
 			} else {
 				p.sendMessage(InfoKeeper.playerNotFound);

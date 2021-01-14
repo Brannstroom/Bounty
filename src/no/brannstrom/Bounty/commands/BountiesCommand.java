@@ -39,7 +39,6 @@ public class BountiesCommand implements CommandExecutor {
 
 		Player p = (Player) sender;
 
-
 		if(MemoryHandler.bounties.isEmpty()) {
 			p.sendMessage(InfoKeeper.noPlayerWithBounty);
 			return true;

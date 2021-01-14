@@ -42,7 +42,7 @@ public class BountyPlugin extends JavaPlugin {
 	public static BountyPlugin instance;
 
 	public void onEnable() {
-		
+
 
 		TABAPI.enableUnlimitedNameTagModePermanently();
 
@@ -69,9 +69,7 @@ public class BountyPlugin extends JavaPlugin {
 	}
 
 	public void onDisable() {
-		if(!MemoryHandler.bounties.isEmpty()) {
-			saveBounties();
-		}
+		saveBounties();
 	}
 
 	private void loadListeners() {
@@ -106,9 +104,13 @@ public class BountyPlugin extends JavaPlugin {
 	}
 
 	public void saveBounties() {
-		bountiesConfig.getConfigurationSection("bounties").getKeys(false).forEach(key -> {
-			bountiesConfig.set("bounties." + key, null);
-		});
+		try { 
+			bountiesConfig.getConfigurationSection("bounties").getKeys(false).forEach(key -> {
+				bountiesConfig.set("bounties." + key, null);
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		for(Map.Entry<String, Double> entry : MemoryHandler.bounties.entrySet()) {
 			double amount = entry.getValue();
@@ -122,10 +124,14 @@ public class BountyPlugin extends JavaPlugin {
 	}
 
 	public void restoreBounties() {
+		try {
 			bountiesConfig.getConfigurationSection("bounties").getKeys(false).forEach(key -> {
 				double amount = bountiesConfig.getDouble("bounties." + key + ".amount");
 				MemoryHandler.bounties.put(key, amount);
 			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void registerCommand(String name, CommandExecutor executor, String... aliases) {

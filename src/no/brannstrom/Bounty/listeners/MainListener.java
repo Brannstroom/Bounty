@@ -74,6 +74,8 @@ public class MainListener implements Listener {
 		if(MemoryHandler.bounties.containsKey(p.getUniqueId().toString())) {
 			double amount = MemoryHandler.bounties.get(p.getUniqueId().toString());
 			MainHandler.setOverName(p, amount);
+		} else {
+			MainHandler.removeOverName(p);
 		}
 	}
 }

@@ -52,7 +52,7 @@ public class MainHandler {
 	
 	public static void setOverName(Player p, double amount) {
 		TabPlayer tp = TABAPI.getPlayer(p.getUniqueId());
-		tp.setValuePermanently(EnumProperty.ABOVENAME, ChatColor.DARK_RED + "Bounty: $" + amount);
+		tp.setValuePermanently(EnumProperty.ABOVENAME, InfoKeeper.overHead.replaceAll("<amount>", String.valueOf(amount)));
 	}
 	
 	public static void removeOverName(Player p) {
