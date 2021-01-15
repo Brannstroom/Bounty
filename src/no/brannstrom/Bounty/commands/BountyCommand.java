@@ -26,12 +26,8 @@ public class BountyCommand implements CommandExecutor {
 		}
 		Player p = (Player) sender;
 		if(args.length == 1) {
-			if(args[0].equalsIgnoreCase("reload")) {
-				BountyPlugin.instance.reloadConfig();
-				InfoKeeper.updateValues();
-				p.sendMessage(InfoKeeper.configReloaded);
-			} else if(Bukkit.getServer().getOfflinePlayer(args[0]) != null) {
-				OfflinePlayer offlineTarget = Bukkit.getPlayer(args[0]);
+			OfflinePlayer offlineTarget = Bukkit.getServer().getOfflinePlayer(args[0]);
+			if(offlineTarget != null) {
 				if(MemoryHandler.bounties.containsKey(offlineTarget.getUniqueId().toString())) {
 					double amount = MemoryHandler.bounties.get(offlineTarget.getUniqueId().toString());
 					p.sendMessage(InfoKeeper.specificPlayersBounty.replaceAll("<player>", offlineTarget.getName()).replaceAll("<amount>", String.valueOf(amount)));
