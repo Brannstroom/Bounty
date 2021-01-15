@@ -48,6 +48,8 @@ Claimed Bounty Killed: '&4<player>&c claimed your bounty of $<amount>.'
 # Broadcasted message when someone claims anothers bounty
 Claimed Bounty Broadcast: '&4<killer>&c claimed the $<amount> bounty on &4<killed>&c.'
 
+Config Reloaded: '&aYou successfully reloaded the config'
+
 # The tag over the players head when they have a bounty
 Over Head: '&eBounty: &6$<amount>'
 
